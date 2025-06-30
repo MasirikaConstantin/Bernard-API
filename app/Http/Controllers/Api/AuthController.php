@@ -14,7 +14,7 @@ class AuthController extends Controller
     /**
      * Enregistrement d'un nouveau motocycliste
      */
-    public function register(Request $request)
+        public function register(Request $request)
     {
         // Validation des données
         $validator = Validator::make($request->all(), [
@@ -22,7 +22,6 @@ class AuthController extends Controller
             'postnom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'telephone' => 'required|string|unique:motocyclistes|max:15',
-            //'numero_plaque' => 'required|string|unique:motocyclistes|max:20',
             'email' => 'required|string|email|unique:motocyclistes|max:255',
             'password' => 'required|string|min:8|confirmed',
             'photo_permis' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -32,47 +31,72 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
+                'message' => 'Validation error',
                 'errors' => $validator->errors()
             ], 422);
         }
 
-        // Traitement des photos
-        $photoPermisPath = null;
-        $photoMotoPath = null;
+        try {
+            // Traitement des photos
+            $photoPermisPath = null;
+            $photoMotoPath = null;
 
-        if ($request->hasFile('photo_permis')) {
-            $photoPermisPath = $request->file('photo_permis')->store('permis', 'public');
+            if ($request->hasFile('photo_permis')) {
+                $photoPermisPath = $request->file('photo_permis')->store('permis', 'public');
+            }
+
+            if ($request->hasFile('photo_moto')) {
+                $photoMotoPath = $request->file('photo_moto')->store('motos', 'public');
+            }
+
+            // Création du motocycliste
+            $motocycliste = Motocycliste::create([
+                'nom' => $request->nom,
+                'postnom' => $request->postnom,
+                'prenom' => $request->prenom,
+                'telephone' => $request->telephone,
+                'numero_plaque' => $request->numero_plaque ?? null, // Champ optionnel
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'photo_permis' => $photoPermisPath,
+                'photo_moto' => $photoMotoPath,
+                'is_active' => true // Activer le compte par défaut
+            ]);
+
+            // Connexion automatique
+            $device_name = $request->header('User-Agent', 'default_device');
+            $token = $motocycliste->createToken($device_name)->plainTextToken;
+
+            // Réponse avec les données simplifiées du motocycliste
+            $responseData = [
+                'success' => true,
+                'message' => 'Inscription et connexion réussies',
+                'data' => [
+                    'user' => [
+                        'id' => $motocycliste->id,
+                        'nom_complet' => $motocycliste->nom . ' ' . $motocycliste->postnom . ' ' . $motocycliste->prenom,
+                        'telephone' => $motocycliste->telephone,
+                        'email' => $motocycliste->email,
+                        'numero_plaque' => $motocycliste->numero_plaque,
+                        'photo_permis_url' => $motocycliste->photo_permis ? asset('storage/'.$motocycliste->photo_permis) : null,
+                        'photo_moto_url' => $motocycliste->photo_moto ? asset('storage/'.$motocycliste->photo_moto) : null,
+                    ],
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                    'expires_in' => config('sanctum.expiration') // Durée de validité du token
+                ]
+            ];
+
+            return response()->json($responseData, 201);
+
+        } catch (\Exception $e) {
+            // En cas d'erreur inattendue
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de l\'inscription',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        if ($request->hasFile('photo_moto')) {
-            $photoMotoPath = $request->file('photo_moto')->store('motos', 'public');
-        }
-
-        // Création du motocycliste
-        $motocycliste = Motocycliste::create([
-            'nom' => $request->nom,
-            'postnom' => $request->postnom,
-            'prenom' => $request->prenom,
-            'telephone' => $request->telephone,
-            'numero_plaque' => $request->numero_plaque,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'photo_permis' => $photoPermisPath,
-            'photo_moto' => $photoMotoPath,
-        ]);
-
-        // Création du token d'authentification
-        $token = $motocycliste->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Inscription réussie',
-            'data' => [
-                'motocycliste' => $motocycliste,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]
-        ], 201);
     }
 
     /**
