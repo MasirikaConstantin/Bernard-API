@@ -109,7 +109,6 @@ class AuthController extends Controller
         'password' => 'required',
         'device_name' => 'required|string' // Pour identifier l'appareil
     ]);
-return response()->json($request->all());
     
     // Déterminer si le login est un email ou un téléphone
     $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'telephone';
