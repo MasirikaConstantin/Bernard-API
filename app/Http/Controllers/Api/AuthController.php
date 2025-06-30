@@ -23,7 +23,7 @@ class AuthController extends Controller
             'prenom' => 'required|string|max:255',
             'telephone' => 'required|string|unique:motocyclistes|max:15',
             'email' => 'required|string|email|unique:motocyclistes|max:255',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6|confirmed',
             'photo_permis' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'photo_moto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -103,45 +103,66 @@ class AuthController extends Controller
      * Connexion d'un motocycliste
      */
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-            'device_name' => 'required', // Pour identifier l'appareil
-        ]);
-
-        $motocycliste = Motocycliste::where('email', $request->email)->first();
-
-        if (!$motocycliste || !Hash::check($request->password, $motocycliste->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Les informations d\'identification sont incorrectes.'],
-            ]);
-        }
-
-        // Vérifier si le compte est actif
-        if (!$motocycliste->is_active) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Votre compte est désactivé. Contactez l\'administration.'
-            ], 403);
-        }
-
-        // Supprimer les anciens tokens (optionnel)
-        $motocycliste->tokens()->where('name', $request->device_name)->delete();
-
-        // Créer un nouveau token
-        $token = $motocycliste->createToken($request->device_name)->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Connexion réussie',
-            'data' => [
-                'motocycliste' => $motocycliste->only(['id', 'nom', 'postnom', 'prenom', 'telephone', 'numero_plaque', 'email']),
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]
-        ]);
+{
+    $request->validate([
+        'login' => 'required|string', // Peut être email ou téléphone
+        'password' => 'required',
+        'device_name' => 'required|string' // Pour identifier l'appareil
+    ]);
+return response()->json($request->all());
+    
+    // Déterminer si le login est un email ou un téléphone
+    $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'telephone';
+    
+    // Nettoyer le numéro de téléphone (enlever les espaces, garder le +)
+    if ($loginField === 'telephone') {
+        $cleanedPhone = preg_replace('/[^0-9+]/', '', $request->login);
     }
+
+    // Chercher l'utilisateur
+    $motocycliste = Motocycliste::where($loginField, $loginField === 'email' ? $request->login : $cleanedPhone)
+                              ->first();
+
+    // Vérifier le mot de passe
+    if (!$motocycliste || !Hash::check($request->password, $motocycliste->password)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Identifiants incorrects'
+        ], 401);
+    }
+
+    // Vérifier si le compte est actif
+    if (!$motocycliste->is_active) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Votre compte est désactivé. Contactez l\'administration.'
+        ], 403);
+    }
+
+    // Supprimer les anciens tokens pour ce device (optionnel)
+    $motocycliste->tokens()->where('name', $request->device_name)->delete();
+
+    // Créer un nouveau token
+    $token = $motocycliste->createToken($request->device_name)->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Connexion réussie',
+        'data' => [
+            'motocycliste' => [
+                'id' => $motocycliste->id,
+                'nom_complet' => $motocycliste->nom.' '.$motocycliste->postnom.' '.$motocycliste->prenom,
+                'telephone' => $motocycliste->telephone,
+                'email' => $motocycliste->email,
+                'numero_plaque' => $motocycliste->numero_plaque,
+                'photo' => $motocycliste->photo_permis ? asset('storage/'.$motocycliste->photo_permis) : null
+            ],
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'expires_in' => config('sanctum.expiration', 525600) // en minutes
+        ]
+    ]);
+}
 
     /**
      * Déconnexion
