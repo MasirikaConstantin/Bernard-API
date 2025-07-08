@@ -234,4 +234,57 @@ public function getTarifs()
         'count' => $tarifs->count(),
     ]);
 }
+
+
+public function updateMotocycliste(Request $request, $id)
+{
+    $motocycliste = Motocycliste::findOrFail($id);
+
+    $validator = Validator::make($request->all(), [
+        'nom' => 'sometimes|string|max:255',
+        'postnom' => 'sometimes|string|max:255',
+        'prenom' => 'sometimes|string|max:255',
+        'telephone' => 'sometimes|string|max:20|unique:motocyclistes,telephone,'.$motocycliste->id,
+        'numero_plaque' => 'sometimes|string|max:20|unique:motocyclistes,numero_plaque,'.$motocycliste->id,
+        'email' => 'sometimes|string|email|max:255|unique:motocyclistes,email,'.$motocycliste->id,
+        'password' => 'sometimes|string|min:8',
+        'photo_permis' => 'sometimes|string|nullable',
+        'photo_moto' => 'sometimes|string|nullable',
+        'is_active' => 'sometimes|boolean',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    $data = $request->all();
+
+    // Ne pas mettre à jour le mot de passe s'il n'est pas fourni
+    if (empty($data['password'])) {
+        unset($data['password']);
+    } else {
+        $data['password'] = bcrypt($data['password']);
+    }
+
+    $motocycliste->update($data);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Informations mises à jour avec succès',
+        'motocycliste' => [
+            'id' => $motocycliste->id,
+            'nom' => $motocycliste->nom,
+            'postnom' => $motocycliste->postnom,
+            'prenom' => $motocycliste->prenom,
+            'telephone' => $motocycliste->telephone,
+            'numero_plaque' => $motocycliste->numero_plaque,
+            'email' => $motocycliste->email,
+            'is_active' => $motocycliste->is_active,
+            // Ne pas renvoyer le mot de passe
+        ]
+    ]);
+}
 }

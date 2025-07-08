@@ -100,8 +100,9 @@ class TaxeController extends Controller
         return redirect()->route('taxes.index')->with('success', 'Taxe mise à jour avec succès.');
     }
 
-    public function destroy(Taxe $taxe)
+    public function destroy(string $taxe)
     {
+        $taxe = Taxe::where('id',$taxe)->firstOrFail();
         $taxe->delete();
 
         return redirect()->route('taxes.index')->with('success', 'Taxe supprimée avec succès.');

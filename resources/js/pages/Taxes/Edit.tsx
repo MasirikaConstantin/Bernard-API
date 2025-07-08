@@ -14,7 +14,6 @@ export default function TaxEdit({ tax, motocyclistes, agents, tarifs }: {
     agents: any[],
     tarifs: any[]
 }) {
-console.log(tax)
 
     const { data, setData, put, processing, errors } = useForm({
         motocycliste_id: tax.motocycliste_id,

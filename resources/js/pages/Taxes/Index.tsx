@@ -103,7 +103,6 @@ export default function TaxeIndex({ taxes }: Props) {
                                                 href={route('taxes.destroy', taxe.id)}
                                                 method="delete"
                                                 as="button"
-                                                confirm="Êtes-vous sûr de vouloir supprimer cette taxe ?"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Link>
