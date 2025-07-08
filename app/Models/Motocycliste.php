@@ -45,6 +45,23 @@ class Motocycliste extends Model
     {
         return $value ? asset('storage/'.$value) : null;
     }
+    public function taxes()
+    {
+        return $this->hasMany(Taxe::class);
+    }
+
+    public function soldes()
+    {
+        return $this->hasMany(Solde::class);
+    }
+
+    public function aPayeTaxeAujourdhui()
+    {
+        return $this->taxes()
+            ->where('date_expiration', '>=', now())
+            ->where('statut', 'payé')
+            ->exists();
+    }
 }
 
 
