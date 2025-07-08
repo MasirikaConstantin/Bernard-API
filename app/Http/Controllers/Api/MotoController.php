@@ -286,5 +286,23 @@ public function updateMotocycliste(Request $request, $id)
             // Ne pas renvoyer le mot de passe
         ]
     ]);
+       
 }
+public function getMotocycliste($id)
+    {
+        $motocycliste = Motocycliste::findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'motocycliste' => [
+                'id' => $motocycliste->id,
+                'nom' => $motocycliste->nom,
+                'postnom' => $motocycliste->postnom,
+                'prenom' => $motocycliste->prenom,
+                'telephone' => $motocycliste->telephone,
+                'numero_plaque' => $motocycliste->numero_plaque,
+                'email' => $motocycliste->email,
+                'is_active' => $motocycliste->is_active,
+            ]
+        ]);
+    }
 }

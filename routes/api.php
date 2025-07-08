@@ -37,4 +37,5 @@ Route::prefix('auth')->group(function () {
     // Obtenir les tarifs
     Route::get('/moto/tarifs', [MotoController::class, 'getTarifs']);
     Route::put('/motocyclistes/{id}', [MotoController::class, 'updateMotocycliste']);
+    Route::get('/le-motocycliste/{id}', [MotoController::class, 'getMotocycliste']);
     
