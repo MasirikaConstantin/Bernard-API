@@ -94,11 +94,11 @@ export default function Index({ controlleurs, filters }: PageProps<{ controlleur
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem asChild>
-                                                    <Link href={route('controlleurs.edit', { controlleur: controlleur.ref })}>Modifier</Link>
+                                                    <Link href={route('controlleurs.edit',  controlleur.ref )}>Modifier</Link>
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem asChild>
                                                     <Link
-                                                        href={route('controlleurs.destroy', { controlleur: controlleur.ref })}
+                                                        href={route('controlleurs.destroy', controlleur.ref )}
                                                         method="delete"
                                                         as="button"
                                                         className="w-full text-left"
