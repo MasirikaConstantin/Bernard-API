@@ -41,3 +41,58 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface PageProps<T extends Record<string, unknown> = {}> extends Page<T> {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+            permissions: {
+                id: number;
+                name: string;
+                action: string;
+                module: string;
+            }[];
+            profile?: {
+                phone?: string;
+                address?: string;
+                hopital_id?: number;
+                hopital?: {
+                    id: number;
+                    nom: string;
+                };
+            };
+            role?: string;
+        };
+        
+    };
+    controlleurs: {
+        data: {
+            id: number;
+            ref: string;
+            name: string;
+            email: string;
+            is_active: boolean;
+            created_at: string;
+            updated_at: string;
+        }[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
+    filters: { search: string };
+    user : {
+        id: number;
+        name: string;
+        email: string;
+        avatar?: string;
+        email_verified_at: string | null;
+        created_at: string;
+        updated_at: string;
+        [key: string]: unknown; // This allows for additional properties...
+    }
+ 
+}
