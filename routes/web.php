@@ -50,14 +50,14 @@ Route::post('soldes/{solde}/retirer', [\App\Http\Controllers\SoldeController::cl
     ->middleware(['auth', 'verified']);
 
     // Dans routes/web.php
-Route::get('soldes/{solde}/ajouter', function (\App\Models\Solde $solde) {
+Route::get('soldes/{solde}/du-ajouter', function (\App\Models\Solde $solde) {
     return Inertia::render('Soldes/Ajouter', [
         'solde' => $solde->load('motocycliste'),
         'action' => 'ajouter',
     ]);
 })->name('soldes.ajouter');
 
-Route::get('soldes/{solde}/retirer', function (\App\Models\Solde $solde) {
+Route::get('soldes/{solde}/du-retirer', function (\App\Models\Solde $solde) {
     return Inertia::render('Soldes/Ajouter', [
         'solde' => $solde->load('motocycliste'),
         'action' => 'retirer',
