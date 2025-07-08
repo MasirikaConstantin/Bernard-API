@@ -56,21 +56,23 @@ class TaxeController extends Controller
         return redirect()->route('taxes.index')->with('success', 'Taxe créée avec succès.');
     }
 
-    public function show(Taxe $taxe)
+    public function show(string $taxe)
     {
+        $taxe = Taxe::where('id',$taxe)->firstOrFail();
         return Inertia::render('Taxes/Show', [
-            'taxe' => $taxe->load(['motocycliste', 'agent', 'tarif']),
+            'tax' => $taxe->load(['motocycliste', 'agent', 'tarif']),
         ]);
     }
 
-    public function edit(Taxe $taxe)
+    public function edit(string $taxe)
     {
+        $taxe = Taxe::where('id',$taxe)->firstOrFail();
         $motocyclistes = Motocycliste::all();
         $agents = Agent::all();
         $tarifs = Tarif::where('is_active', true)->get();
 
         return Inertia::render('Taxes/Edit', [
-            'taxe' => $taxe,
+            'tax' => $taxe,
             'motocyclistes' => $motocyclistes,
             'agents' => $agents,
             'tarifs' => $tarifs,

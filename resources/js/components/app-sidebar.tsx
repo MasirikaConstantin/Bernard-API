@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, ContactRound, Euro, Folder, LayoutGrid, MonitorCheck } from 'lucide-react';
+import { BookOpen, ContactRound, DollarSign, Euro, Folder, LayoutGrid, MonitorCheck } from 'lucide-react';
 import AppLogo from './app-logo';
 import { title } from 'process';
 
@@ -35,10 +35,16 @@ const mainNavItems: NavItem[] = [
         icon: Euro
     },
     {
-        title : "Paiements",
-        href : "/paiements",
-        icon : MonitorCheck
-    }
+        title : "Taxes",
+        href : "/taxes",
+        icon : BookOpen
+    },
+    {
+        title : "Soldes",
+        href : "/soldes",
+        icon : DollarSign
+    },
+   
 ];
 
 
