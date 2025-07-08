@@ -55,7 +55,7 @@ class User extends Authenticatable
         parent::boot();
         
         static::creating(function ($model) {
-            $model->ref = Str::uuid();
+            //$model->ref = Str::uuid();
         });
     }
 
