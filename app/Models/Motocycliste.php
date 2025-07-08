@@ -46,3 +46,6 @@ class Motocycliste extends Model
         return $value ? asset('storage/'.$value) : null;
     }
 }
+
+
+

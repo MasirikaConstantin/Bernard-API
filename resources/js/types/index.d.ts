@@ -31,6 +31,32 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
+export interface Agent {
+    id: number;
+    matricule: string;
+    nom: string;
+    prenom: string;
+    email: string;
+    telephone: string;
+    zone_affectation: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Motocycliste {
+    id: number;
+    nom: string;
+    postnom: string;
+    prenom: string;
+    email: string;
+    telephone: string;
+    numero_plaque: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface User {
     id: number;
     name: string;
