@@ -29,6 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('motocyclistes', MotocyclisteController::class);
 });
+Route::resource('tarifs', \App\Http\Controllers\TarifController::class);
+Route::resource('paiements', \App\Http\Controllers\PaiementController::class)
+    ->middleware(['auth', 'verified']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
