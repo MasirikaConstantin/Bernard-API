@@ -55,14 +55,14 @@ Route::get('lesoldes/{solde}/du-ajouter', function (\App\Models\Solde $solde) {
         'solde' => $solde->load('motocycliste'),
         'action' => 'ajouter',
     ]);
-})->name('soldes.ajouter');
+})->name('soldes.ajouter.view');
 
 Route::get('lesoldes/{solde}/du-retirer', function (\App\Models\Solde $solde) {
     return Inertia::render('Soldes/Ajouter', [
         'solde' => $solde->load('motocycliste'),
         'action' => 'retirer',
     ]);
-})->name('soldes.retirer');
+})->name('soldes.retirer.view');
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 

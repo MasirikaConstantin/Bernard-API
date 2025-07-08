@@ -87,12 +87,12 @@ export default function SoldeIndex({ soldes }: Props) {
                                     </TableCell>
                                     <TableCell className="space-x-2">
                                         <Button size="sm" variant="outline" asChild>
-                                            <Link href={route('soldes.ajouter', solde.id)}>
+                                            <Link href={route('soldes.ajouter.view', solde.id)}>
                                                 <Plus className="h-4 w-4" />
                                             </Link>
                                         </Button>
                                         <Button size="sm" variant="outline" asChild>
-                                            <Link href={route('soldes.retirer', solde.id)}>
+                                            <Link href={route('soldes.retirer.view', solde.id)}>
                                                 <Minus className="h-4 w-4" />
                                             </Link>
                                         </Button>
