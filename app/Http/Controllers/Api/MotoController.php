@@ -305,4 +305,28 @@ public function getMotocycliste($id)
             ]
         ]);
     }
+    public function getToutSoldes($id)
+{
+    $typesDisponibles = ['Airtel Money', 'Orange Money', 'M-PESA'];
+
+    // On récupère tous les soldes existants pour ce motocycliste
+    $soldesExistants = Solde::where('motocycliste_id', $id)->get();
+
+    // On construit un tableau avec tous les types attendus
+    $soldes = collect($typesDisponibles)->map(function ($type) use ($soldesExistants) {
+        $solde = $soldesExistants->firstWhere('type_solde', $type);
+
+        return [
+            'type' => $type,
+            'montant' => $solde ? floatval($solde->montant) : 0,
+            'numero_compte' => $solde ? $solde->numero_compte : null,
+        ];
+    });
+
+    return response()->json([
+        'motocycliste_id' => $id,
+        'soldes' => $soldes,
+    ]);
+}
+
 }

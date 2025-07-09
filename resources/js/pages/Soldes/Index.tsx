@@ -96,11 +96,7 @@ export default function SoldeIndex({ soldes }: Props) {
                                                 <Minus className="h-4 w-4" />
                                             </Link>
                                         </Button>
-                                        <Button size="sm" variant="outline" asChild>
-                                            <Link href={route('soldes.edit', solde.id)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Link>
-                                        </Button>
+                                       
                                         <Button size="sm" variant="destructive" asChild>
                                             <Link
                                                 href={route('soldes.destroy', solde.id)}

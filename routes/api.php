@@ -38,4 +38,5 @@ Route::prefix('auth')->group(function () {
     Route::get('/moto/tarifs', [MotoController::class, 'getTarifs']);
     Route::put('/motocyclistes/{id}', [MotoController::class, 'updateMotocycliste']);
     Route::get('/le-motocycliste/{id}', [MotoController::class, 'getMotocycliste']);
+    Route::get('/les_soldes/{id}', [MotoController::class, 'getToutSoldes']);
     
